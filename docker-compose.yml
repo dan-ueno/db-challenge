@@ -1,0 +1,22 @@
+services:
+  local:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/dumps:/app-db-dumps
+    environment:
+      - POSTGRES_USER=api
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db
+
+  test:
+    image: postgres:14-alpine
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./db/dumps:/app-db-dumps
+    environment:
+      - POSTGRES_USER=test-api
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db
