@@ -1,0 +1,66 @@
+generator client {
+    provider      = "prisma-client-js"
+    engineType    = "binary"
+    binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Schedule {
+    id        String   @id @default(uuid())
+    accountId Int      @map("account_id")
+    agentId   Int      @map("agent_id")
+    startTime DateTime @map("start_time")
+    endTime   DateTime @map("end_time")
+
+    tasks   Task[]  @relation("schedule_tasks")
+    account Account @relation(name: "account_schedules", fields: [accountId], references: [id])
+    agent   Agent   @relation(name: "agent_schedules", fields: [agentId], references: [id])
+
+    @@map("schedule")
+}
+
+model Task {
+    id         String   @id @default(uuid())
+    accountId  Int      @map("account_id")
+    scheduleId String   @map("schedule_id")
+    startTime  DateTime @map("start_time")
+    duration   Int
+    type       TaskEnum
+
+    schedule Schedule @relation(name: "schedule_tasks", fields: [scheduleId], references: [id])
+    account  Account  @relation(name: "account_tasks", fields: [accountId], references: [id])
+
+    @@map("task")
+}
+
+model Account {
+    id   Int    @id @default(autoincrement())
+    name String
+    email String @unique
+
+    schedules Schedule[] @relation("account_schedules")
+    tasks     Task[]     @relation("account_tasks")
+
+    @@map("account")
+}
+
+model Agent {
+    id   Int    @id @default(autoincrement())
+    name String
+    email String @unique
+    
+    schedules Schedule[] @relation("agent_schedules")
+
+    @@map("agent")
+}
+
+enum TaskEnum {
+    break
+    work
+
+    @@map("task_enum")
+}
