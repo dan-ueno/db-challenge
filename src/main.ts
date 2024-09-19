@@ -11,7 +11,7 @@ async function bootstrap() {
   const port = config.get<number>('PORT') ?? 8080;
 
   await app.listen(port);
-  logger.log({ message: `Server is running on port ${port}` });
+  logger.log(`Server is running on port ${port}`);
 
   process.on('SIGTERM', () => {
     app.close().then(() => {

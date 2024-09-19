@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { PrismaModule } from './database/prisma.module';
+import { PrismaModule } from './database';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigValidator } from './config';
 import { LoggerModule } from './logger';
