@@ -13,11 +13,30 @@ type AccountBase {
   name: String!
 }
 
-input AccountByIdInput {
+input AccountByEmailInput {
+  """Account email"""
+  email: String!
+}
+
+input CreateAccountInput {
+  """Account email"""
+  email: String!
+
   """Account id"""
-  id: Float!
+  name: String!
+}
+
+type Mutation {
+  createAccount(data: CreateAccountInput!): AccountBase!
+  deleteAccount: String!
+  updateAccount(data: UpdateAccountInput!): AccountBase!
 }
 
 type Query {
-  getAccount(data: AccountByIdInput!): AccountBase!
+  getAccount(data: AccountByEmailInput!): AccountBase!
+}
+
+input UpdateAccountInput {
+  """Account name"""
+  name: String!
 }
