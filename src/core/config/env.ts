@@ -7,6 +7,7 @@ const envSchema = {
   DATABASE_URL: Joi.string().required(),
   DATABASE_POOL_MAX_CONNECTIONS: Joi.string().default(10),
   DATABASE_POOL_TIMEOUT: Joi.string().default(30),
+  GRAPHQL_SCHEMA_VISIBLE: Joi.boolean().default(false),
 };
 
 export const validationSchema = Joi.object(envSchema);
