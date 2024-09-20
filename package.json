@@ -18,11 +18,8 @@
     "db:init": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:reset": "prisma migrate reset",
-    "test": "TEST=true && jest --config ./test/jest.config.ts",
-    "test:watch": "TEST=true && jest --watch",
-    "test:cov": "TEST=true &&  jest --coverage",
-    "test:debug": "TEST=true && node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "TEST=true && jest --config ./test/jest.e2e.config.ts"
+    "test": "jest --config ./test/jest.config.ts",
+    "test:e2e": "jest --config ./test/jest.e2e.config.ts" 
   },
   "dependencies": {
     "@apollo/server": "4.11.0",
@@ -48,6 +45,7 @@
     "@types/supertest": "6.0.2",
     "@typescript-eslint/eslint-plugin": "8.6.0",
     "@typescript-eslint/parser": "8.6.0",
+    "dotenv": "16.4.5",
     "eslint": "8.57.1",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-prettier": "5.2.1",

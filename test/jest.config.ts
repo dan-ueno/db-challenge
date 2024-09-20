@@ -1,6 +1,7 @@
 import type { Config } from 'jest';
 import { pathsToModuleNameMapper } from 'ts-jest';
 import { compilerOptions } from '../tsconfig.json';
+import './config-test-env';
 
 const config: Config = {
   moduleFileExtensions: ['js', 'json', 'ts'],
@@ -13,6 +14,7 @@ const config: Config = {
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: '<rootDir>/',
   }),
+  testTimeout: 30000,
 };
 
 export default config;

@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "paths": {
+      "src/*": ["./*"],
       "@core": ["./core/"],
       "@core/*": ["./core/*"],
       "shared": ["./shared/"],
