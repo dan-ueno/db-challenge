@@ -15,6 +15,7 @@ import { GraphqlModule } from './graphql.module';
       useFactory: async (config: ConfigService) => ({
         playground: config.get(Env.GRAPHQL_SCHEMA_VISIBLE),
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        context: ({ req }: any) => ({ ...req.headers }),
         sortSchema: true,
       }),
     }),

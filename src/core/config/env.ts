@@ -1,7 +1,5 @@
 import * as Joi from 'joi';
 
-export const envFile = process.env.TEST === 'true' ? 'sample.env' : '.env';
-
 const envSchema = {
   PORT: Joi.number().default(3000),
   DATABASE_URL: Joi.string().required(),

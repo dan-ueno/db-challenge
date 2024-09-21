@@ -1,5 +1,9 @@
 import { PrismaService } from '@core/database';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { AccountBaseModel, AccountModel } from 'shared/model';
 
 @Injectable()
@@ -10,12 +14,16 @@ export class AccountDatasourceService {
     try {
       return this.prisma.account.findFirstOrThrow({ where: { id } });
     } catch {
-      throw new NotFoundException('Schedule not found');
+      throw new NotFoundException('Account not found');
     }
   }
 
-  async findByEmail(email: string): Promise<AccountBaseModel | null> {
-    return this.prisma.account.findFirst({ where: { email } });
+  async findByEmail(email: string): Promise<AccountBaseModel> {
+    try {
+      return this.prisma.account.findFirstOrThrow({ where: { email } });
+    } catch {
+      throw new NotFoundException('Account not found');
+    }
   }
 
   async getById(id: number): Promise<AccountModel> {
@@ -26,12 +34,16 @@ export class AccountDatasourceService {
   }
 
   async create(name: string, email: string): Promise<AccountBaseModel> {
-    return this.prisma.account.create({
-      data: {
-        name,
-        email,
-      },
-    });
+    try {
+      return this.prisma.account.create({
+        data: {
+          name,
+          email,
+        },
+      });
+    } catch {
+      throw new ConflictException('Email already registered');
+    }
   }
 
   async update(id: number, name: string): Promise<AccountBaseModel> {
