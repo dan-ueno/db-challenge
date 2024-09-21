@@ -33,13 +33,11 @@ describe('Account Resolver - getAccount query', () => {
     accountDatasource = moduleFixture.get<AccountDatasourceService>(
       AccountDatasourceService,
     );
-  });
-  afterEach(async () => {
-    await prismaService.$disconnect();
     await prismaService.account.deleteMany();
   });
 
   afterAll(async () => {
+    await prismaService.$disconnect();
     await app.close();
   });
 

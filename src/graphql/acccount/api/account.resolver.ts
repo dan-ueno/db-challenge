@@ -33,7 +33,7 @@ export class AccountResolver {
   async createAccount(
     @Args('data') input: CreateAccountInput,
   ): Promise<AccountBaseModel> {
-    return this.accountService.create(input.name, input.name);
+    return this.accountService.create(input.name, input.email);
   }
 
   @Mutation(() => AccountBase)
