@@ -5,7 +5,11 @@ import { INestApplication } from '@nestjs/common';
 import { PrismaService } from '@core/database';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
-import { AccountDatasourceService } from 'src/shared';
+import {
+  AccountDatasourceService,
+  NOT_FOUND_ACCOUNT_MESSAGE,
+} from 'shared/data';
+import { UNAUTHORIZED_ACCOUNT_MESSAGE } from '../account.resolver';
 
 describe('Account Resolver - updateAccount mutation', () => {
   let app: INestApplication;
@@ -22,7 +26,7 @@ describe('Account Resolver - updateAccount mutation', () => {
     }
   `;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -33,7 +37,10 @@ describe('Account Resolver - updateAccount mutation', () => {
     accountDatasource = moduleFixture.get<AccountDatasourceService>(
       AccountDatasourceService,
     );
-    await prismaService.account.deleteMany();
+  });
+
+  afterEach(async () => {
+    await prismaService.account.deleteMany({});
   });
 
   afterAll(async () => {
@@ -47,6 +54,7 @@ describe('Account Resolver - updateAccount mutation', () => {
       'test@email.com',
     );
     variables = { data: { name: 'updated test User' } };
+    expect(account).toBeDefined();
 
     const response = await request(app.getHttpServer())
       .set('accountId', `${account.id}`)
@@ -71,7 +79,7 @@ describe('Account Resolver - updateAccount mutation', () => {
       .mutate(updateAccountMutation, variables);
 
     expect(response.data).toBeNull();
-    expect(response.errors[0].message).toBe('No Account found');
+    expect(response.errors[0].message).toBe(NOT_FOUND_ACCOUNT_MESSAGE);
   });
 
   it('Should fail if accountId is not at headers', async () => {
@@ -83,7 +91,7 @@ describe('Account Resolver - updateAccount mutation', () => {
     );
 
     expect(response.data).toBeNull();
-    expect(response.errors[0].message).toBe('accountId must be informed');
+    expect(response.errors[0].message).toBe(UNAUTHORIZED_ACCOUNT_MESSAGE);
   });
 
   it('Should fail if accountId at headers is not a number', async () => {
@@ -94,6 +102,6 @@ describe('Account Resolver - updateAccount mutation', () => {
       .mutate(updateAccountMutation, variables);
 
     expect(response.data).toBeNull();
-    expect(response.errors[0].message).toBe('accountId must be informed');
+    expect(response.errors[0].message).toBe(UNAUTHORIZED_ACCOUNT_MESSAGE);
   });
 });

@@ -1,37 +1,51 @@
 import { PrismaService } from '@core/database';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { AgentBaseModel, AgentModel } from 'shared/model';
+
+export const NOT_FOUND_AGENT_MESSAGE = 'Agent not found';
+export const CONFLICT_AGENT_MESSAGE = 'Email already registered';
 
 @Injectable()
 export class AgentDatasourceService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findById(id: number): Promise<AgentBaseModel> {
+    let agent: AgentBaseModel;
     try {
-      return this.prisma.agent.findFirstOrThrow({ where: { id } });
+      agent = await this.prisma.agent.findFirstOrThrow({ where: { id } });
     } catch {
-      throw new NotFoundException('Schedule not found');
+      throw new NotFoundException(NOT_FOUND_AGENT_MESSAGE);
     }
+    return agent;
   }
 
-  async findByEmail(email: string): Promise<AgentBaseModel | null> {
-    return this.prisma.agent.findFirst({ where: { email } });
-  }
-
-  async getById(id: number): Promise<AgentModel> {
-    return this.prisma.agent.findFirstOrThrow({
-      where: { id },
-      include: { schedules: { include: { tasks: true } } },
-    });
+  async findByEmail(email: string): Promise<AgentBaseModel> {
+    let agent: AgentBaseModel;
+    try {
+      agent = await this.prisma.agent.findFirstOrThrow({ where: { email } });
+    } catch {
+      throw new NotFoundException(NOT_FOUND_AGENT_MESSAGE);
+    }
+    return agent;
   }
 
   async create(name: string, email: string): Promise<AgentBaseModel> {
-    return this.prisma.agent.create({
-      data: {
-        name,
-        email,
-      },
-    });
+    let agent: AgentBaseModel;
+    try {
+      agent = await this.prisma.agent.create({
+        data: {
+          name,
+          email,
+        },
+      });
+    } catch {
+      throw new ConflictException(CONFLICT_AGENT_MESSAGE);
+    }
+    return agent;
   }
 
   async update(id: number, name: string): Promise<AgentBaseModel> {

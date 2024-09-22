@@ -18,8 +18,8 @@
     "db:init": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:reset": "prisma migrate reset",
-    "test": "jest --config ./test/jest.config.ts",
-    "test:e2e": "jest --config ./test/jest.e2e.config.ts" 
+    "test": "jest --config ./test/jest.config.ts --runInBand",
+    "test:e2e": "jest --config ./test/jest.e2e.config.ts --runInBand"
   },
   "dependencies": {
     "@apollo/server": "4.11.0",

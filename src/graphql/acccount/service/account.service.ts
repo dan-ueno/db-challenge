@@ -17,12 +17,6 @@ export class AccountService {
     return this.accountDatasource.findByEmail(email);
   }
 
-  async getAccountDetails(id: number): Promise<AccountModel> {
-    await this.accountDatasource.findById(id);
-
-    return this.accountDatasource.getById(id);
-  }
-
   async create(name: string, email: string): Promise<AccountBaseModel> {
     return this.accountDatasource.create(name, email);
   }

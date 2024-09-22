@@ -15,6 +15,8 @@ const config: Config = {
     prefix: '<rootDir>/',
   }),
   testTimeout: 30000,
+  verbose: true,
+  maxConcurrency: 1,
 };
 
 export default config;

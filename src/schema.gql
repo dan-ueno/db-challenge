@@ -18,6 +18,22 @@ input AccountByEmailInput {
   email: String!
 }
 
+type AgentBase {
+  """Agent email"""
+  email: String!
+
+  """Agent id"""
+  id: Float!
+
+  """Agent name"""
+  name: String!
+}
+
+input AgentByEmailInput {
+  """Agent email"""
+  email: String!
+}
+
 input CreateAccountInput {
   """Account email"""
   email: String!
@@ -26,17 +42,34 @@ input CreateAccountInput {
   name: String!
 }
 
+input CreateAgentInput {
+  """Agent email"""
+  email: String!
+
+  """Agent id"""
+  name: String!
+}
+
 type Mutation {
   createAccount(data: CreateAccountInput!): AccountBase!
+  createAgent(data: CreateAgentInput!): AgentBase!
   deleteAccount: String!
+  deleteAgent: String!
   updateAccount(data: UpdateAccountInput!): AccountBase!
+  updateAgent(data: UpdateAgentInput!): AgentBase!
 }
 
 type Query {
   getAccount(data: AccountByEmailInput!): AccountBase!
+  getAgent(data: AgentByEmailInput!): AgentBase!
 }
 
 input UpdateAccountInput {
   """Account name"""
+  name: String!
+}
+
+input UpdateAgentInput {
+  """Agent name"""
   name: String!
 }
