@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type AccountBase {
+type Account {
   """Account email"""
   email: String!
 
@@ -51,16 +51,16 @@ input CreateAgentInput {
 }
 
 type Mutation {
-  createAccount(data: CreateAccountInput!): AccountBase!
+  createAccount(data: CreateAccountInput!): Account!
   createAgent(data: CreateAgentInput!): AgentBase!
   deleteAccount: String!
   deleteAgent: String!
-  updateAccount(data: UpdateAccountInput!): AccountBase!
+  updateAccount(data: UpdateAccountInput!): Account!
   updateAgent(data: UpdateAgentInput!): AgentBase!
 }
 
 type Query {
-  getAccount(data: AccountByEmailInput!): AccountBase!
+  getAccount(data: AccountByEmailInput!): Account!
   getAgent(data: AgentByEmailInput!): AgentBase!
 }
 

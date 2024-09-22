@@ -79,7 +79,7 @@ describe('Account Resolver - delete mutation', () => {
     );
 
     expect(response.data).toBeNull();
-    expect(response.errors[0].message).toBe(UNAUTHORIZED_ACCOUNT_MESSAGE);
+    expect(response.errors?.[0].message).toBe(UNAUTHORIZED_ACCOUNT_MESSAGE);
   });
 
   it('Should fail if accountId at headers is not a number', async () => {
@@ -88,6 +88,6 @@ describe('Account Resolver - delete mutation', () => {
       .mutate(deleteAccountMutation);
 
     expect(response.data).toBeNull();
-    expect(response.errors[0].message).toBe(UNAUTHORIZED_ACCOUNT_MESSAGE);
+    expect(response.errors?.[0].message).toBe(UNAUTHORIZED_ACCOUNT_MESSAGE);
   });
 });
