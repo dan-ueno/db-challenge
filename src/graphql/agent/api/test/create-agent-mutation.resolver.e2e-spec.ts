@@ -1,23 +1,20 @@
 import request from 'supertest-graphql';
 import gql from 'graphql-tag';
-import { CreateAccountInput } from '../account.input';
+import { CreateAgentInput } from '../agent.input';
 import { INestApplication } from '@nestjs/common';
 import { PrismaService } from '@core/database';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
-import {
-  AccountDatasourceService,
-  CONFLICT_ACCOUNT_MESSAGE,
-} from 'shared/data';
+import { AgentDatasourceService, CONFLICT_AGENT_MESSAGE } from 'shared/data';
 
-describe('Account Resolver - createAccount mutation', () => {
+describe('Agent Resolver - createAgent mutation', () => {
   let app: INestApplication;
   let prismaService: PrismaService;
-  let accountDatasource: AccountDatasourceService;
-  let variables: { data: CreateAccountInput };
-  const createAccountMutation = gql`
-    mutation createAccount($data: CreateAccountInput!) {
-      createAccount(data: $data) {
+  let agentDatasource: AgentDatasourceService;
+  let variables: { data: CreateAgentInput };
+  const createAgentMutation = gql`
+    mutation createAgent($data: CreateAgentInput!) {
+      createAgent(data: $data) {
         id
         name
         email
@@ -33,13 +30,13 @@ describe('Account Resolver - createAccount mutation', () => {
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
     app = moduleFixture.createNestApplication();
     await app.init();
-    accountDatasource = moduleFixture.get<AccountDatasourceService>(
-      AccountDatasourceService,
+    agentDatasource = moduleFixture.get<AgentDatasourceService>(
+      AgentDatasourceService,
     );
   });
 
   afterEach(async () => {
-    await prismaService.account.deleteMany({});
+    await prismaService.agent.deleteMany({});
   });
 
   afterAll(async () => {
@@ -47,37 +44,34 @@ describe('Account Resolver - createAccount mutation', () => {
     await app.close();
   });
 
-  it('Should create the user and return BaseAccountModel', async () => {
-    await accountDatasource.create('test User', 'test@email.com');
+  it('Should create the user and return BaseAgentModel', async () => {
+    await agentDatasource.create('test User', 'test@email.com');
     variables = {
       data: { name: 'test User 2', email: 'test2@email.com' },
     };
 
     const response = await request(app.getHttpServer()).mutate(
-      createAccountMutation,
+      createAgentMutation,
       variables,
     );
-    const newUser = await accountDatasource.findByEmail(variables.data.email);
+    const newUser = await agentDatasource.findByEmail(variables.data.email);
 
     expect(response.data).toStrictEqual({
-      createAccount: newUser,
+      createAgent: newUser,
     });
     expect(newUser.name).toBe(variables.data.name);
   });
 
   it('Should fail if email is already registered', async () => {
-    const account = await accountDatasource.create(
-      'test User',
-      'test@email.com',
-    );
-    variables = { data: { name: 'test User 2', email: account.email } };
+    const agent = await agentDatasource.create('test User', 'test@email.com');
+    variables = { data: { name: 'test User 2', email: agent.email } };
 
     const response = await request(app.getHttpServer()).mutate(
-      createAccountMutation,
+      createAgentMutation,
       variables,
     );
 
     expect(response.data).toBeNull();
-    expect(response.errors[0].message).toBe(CONFLICT_ACCOUNT_MESSAGE);
+    expect(response.errors[0].message).toBe(CONFLICT_AGENT_MESSAGE);
   });
 });

@@ -4,7 +4,14 @@ import { INestApplication } from '@nestjs/common';
 import { PrismaService } from '@core/database';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
-import { AccountDatasourceService } from 'src/shared';
+import {
+  AccountDatasourceService,
+  NOT_FOUND_ACCOUNT_MESSAGE,
+} from 'shared/data';
+import {
+  DELETED_ACCOUNT_MESSAGE,
+  UNAUTHORIZED_ACCOUNT_MESSAGE,
+} from '../account.resolver';
 
 describe('Account Resolver - delete mutation', () => {
   let app: INestApplication;
@@ -16,7 +23,7 @@ describe('Account Resolver - delete mutation', () => {
     }
   `;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -27,7 +34,10 @@ describe('Account Resolver - delete mutation', () => {
     accountDatasource = moduleFixture.get<AccountDatasourceService>(
       AccountDatasourceService,
     );
-    await prismaService.account.deleteMany();
+  });
+
+  afterEach(async () => {
+    await prismaService.account.deleteMany({});
   });
 
   afterAll(async () => {
@@ -35,17 +45,18 @@ describe('Account Resolver - delete mutation', () => {
     await app.close();
   });
 
-  it('Should delete the user and return confirmation string', async () => {
+  it('Should delete the account and return confirmation string', async () => {
     const account = await accountDatasource.create(
       'test User',
       'test@email.com',
     );
+    expect(account).toBeDefined();
 
     const response = await request(app.getHttpServer())
       .set('accountId', `${account.id}`)
       .mutate(deleteAccountMutation);
 
-    expect(response.data.deleteAccount).toBe('Account successsfully deleted');
+    expect(response.data.deleteAccount).toBe(DELETED_ACCOUNT_MESSAGE);
   });
 
   it('Should fail if accountId does not match any account', async () => {
@@ -59,7 +70,7 @@ describe('Account Resolver - delete mutation', () => {
       .mutate(deleteAccountMutation);
 
     expect(response.data).toBeNull();
-    expect(response.errors[0].message).toBe('No Account found');
+    expect(response.errors[0].message).toBe(NOT_FOUND_ACCOUNT_MESSAGE);
   });
 
   it('Should fail if accountId is not at headers', async () => {
@@ -68,7 +79,7 @@ describe('Account Resolver - delete mutation', () => {
     );
 
     expect(response.data).toBeNull();
-    expect(response.errors[0].message).toBe('accountId must be informed');
+    expect(response.errors[0].message).toBe(UNAUTHORIZED_ACCOUNT_MESSAGE);
   });
 
   it('Should fail if accountId at headers is not a number', async () => {
@@ -77,6 +88,6 @@ describe('Account Resolver - delete mutation', () => {
       .mutate(deleteAccountMutation);
 
     expect(response.data).toBeNull();
-    expect(response.errors[0].message).toBe('accountId must be informed');
+    expect(response.errors[0].message).toBe(UNAUTHORIZED_ACCOUNT_MESSAGE);
   });
 });

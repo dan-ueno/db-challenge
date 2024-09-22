@@ -1,23 +1,20 @@
 import request from 'supertest-graphql';
 import gql from 'graphql-tag';
-import {
-  AccountDatasourceService,
-  NOT_FOUND_ACCOUNT_MESSAGE,
-} from 'shared/data';
-import { AccountByEmailInput } from '../account.input';
+import { AgentDatasourceService, NOT_FOUND_AGENT_MESSAGE } from 'shared/data';
+import { AgentByEmailInput } from '../agent.input';
 import { INestApplication } from '@nestjs/common';
 import { PrismaService } from '@core/database';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 
-describe('Account Resolver - getAccount query', () => {
+describe('Agent Resolver - getAgent query', () => {
   let app: INestApplication;
   let prismaService: PrismaService;
-  let accountDatasource: AccountDatasourceService;
-  let queryVariables: { data: AccountByEmailInput };
-  const getAccountQuery = gql`
-    query getAccount($data: AccountByEmailInput!) {
-      getAccount(data: $data) {
+  let agentDatasource: AgentDatasourceService;
+  let queryVariables: { data: AgentByEmailInput };
+  const getAgentQuery = gql`
+    query getAgent($data: AgentByEmailInput!) {
+      getAgent(data: $data) {
         id
         name
         email
@@ -33,13 +30,13 @@ describe('Account Resolver - getAccount query', () => {
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
     app = moduleFixture.createNestApplication();
     await app.init();
-    accountDatasource = moduleFixture.get<AccountDatasourceService>(
-      AccountDatasourceService,
+    agentDatasource = moduleFixture.get<AgentDatasourceService>(
+      AgentDatasourceService,
     );
   });
 
   afterEach(async () => {
-    await prismaService.account.deleteMany({});
+    await prismaService.agent.deleteMany({});
   });
 
   afterAll(async () => {
@@ -47,21 +44,17 @@ describe('Account Resolver - getAccount query', () => {
     await app.close();
   });
 
-  it('Should return BaseAccountModel', async () => {
-    const account = await accountDatasource.create(
-      'test User',
-      'test@email.com',
-    );
-    expect(account).toBeDefined();
-    queryVariables = { data: { email: account.email } };
+  it('Should return BaseAgentModel', async () => {
+    const agent = await agentDatasource.create('test User', 'test@email.com');
+    queryVariables = { data: { email: agent.email } };
 
     const response = await request(app.getHttpServer()).query(
-      getAccountQuery,
+      getAgentQuery,
       queryVariables,
     );
 
     expect(response.data).toStrictEqual({
-      getAccount: account,
+      getAgent: agent,
     });
   });
 
@@ -69,11 +62,11 @@ describe('Account Resolver - getAccount query', () => {
     queryVariables = { data: { email: 'non-existent@email.com' } };
 
     const response = await request(app.getHttpServer()).query(
-      getAccountQuery,
+      getAgentQuery,
       queryVariables,
     );
 
     expect(response.data).toBeNull();
-    expect(response.errors[0].message).toBe(NOT_FOUND_ACCOUNT_MESSAGE);
+    expect(response.errors[0].message).toBe(NOT_FOUND_AGENT_MESSAGE);
   });
 });
