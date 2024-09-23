@@ -4,32 +4,25 @@ import { INestApplication } from '@nestjs/common';
 import { PrismaService } from '@core/database';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
-import { AccountModel, TaskType } from 'shared';
+import { AccountModel, AgentModel, TaskType } from 'shared';
 import { addDays, subDays } from 'date-fns';
 import { ScheduleBase } from '../schedule.type';
-import { UNAUTHORIZED_ACCOUNT_MESSAGE } from '../schedule.resolver';
+import { UNAUTHORIZED_AGENT_MESSAGE } from '../schedule.resolver';
 
 describe('Scheduler Resolver - listSchedulesforAccount query', () => {
   let app: INestApplication;
   let prismaService: PrismaService;
   let account: AccountModel;
+  let agent: AgentModel;
   let schedules: ScheduleBase[];
-  const listSchedulesforAccountQuery = gql`
-    query listSchedulesforAccount {
-      listSchedulesforAccount {
+  const listSchedulesforAgent = gql`
+    query listSchedulesforAgent {
+      listSchedulesforAgent {
         id
         accountId
         agentId
         startTime
         endTime
-        account {
-          name
-          email
-        }
-        agent {
-          name
-          email
-        }
         tasks {
           id
           scheduleId
@@ -60,7 +53,7 @@ describe('Scheduler Resolver - listSchedulesforAccount query', () => {
     account = await prismaService.account.create({
       data: { name: 'Account User', email: 'account@email.com' },
     });
-    const agent = await prismaService.agent.create({
+    agent = await prismaService.agent.create({
       data: { name: 'Agent User', email: 'agent@email.com' },
     });
     await prismaService.schedule.createMany({
@@ -121,10 +114,10 @@ describe('Scheduler Resolver - listSchedulesforAccount query', () => {
 
   it('Should  list schedules', async () => {
     const response = await request(app.getHttpServer())
-      .set('accountId', `${account.id}`)
-      .mutate(listSchedulesforAccountQuery);
+      .set('agentId', `${agent.id}`)
+      .mutate(listSchedulesforAgent);
     const dbTasks = await prismaService.schedule.findMany({});
-    const responseSchedules = response.data.listSchedulesforAccount;
+    const responseSchedules = response.data?.listSchedulesforAgent;
 
     expect(responseSchedules.length).toBe(2);
     expect(responseSchedules[0].id).toBe(dbTasks[0].id);
@@ -142,20 +135,20 @@ describe('Scheduler Resolver - listSchedulesforAccount query', () => {
       },
     });
     const response = await request(app.getHttpServer())
-      .set('accountId', `${account.id}`)
-      .mutate(listSchedulesforAccountQuery);
-    const responseSchedules = response.data.listSchedulesforAccount;
+      .set('agentId', `${agent.id}`)
+      .mutate(listSchedulesforAgent);
+    const responseSchedule = response.data.listSchedulesforAgent;
 
-    expect(responseSchedules.length).toBe(1);
-    expect(responseSchedules[0].id).toBe(schedules[1].id);
+    expect(responseSchedule.length).toBe(1);
+    expect(responseSchedule[0].id).toBe(schedules[1].id);
   });
 
-  it('Should fail if there is no accountId at headers', async () => {
+  it('Should fail if there is no agentId at headers', async () => {
     const response = await request(app.getHttpServer()).mutate(
-      listSchedulesforAccountQuery,
+      listSchedulesforAgent,
     );
 
     expect(response.data).toBeNull();
-    expect(response.errors[0].message).toBe(UNAUTHORIZED_ACCOUNT_MESSAGE);
+    expect(response.errors[0].message).toBe(UNAUTHORIZED_AGENT_MESSAGE);
   });
 });
