@@ -1,6 +1,6 @@
 import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql';
 import { AccountBaseModel, TaskBaseModel, TaskModel, TaskType } from 'shared';
-import { AccountBase } from 'src/graphql/acccount/api/account.type';
+import { AccountBase } from 'src/graphql/account/api/account.type';
 
 @ObjectType()
 export class TaskBase implements TaskBaseModel {

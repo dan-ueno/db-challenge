@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AccountModule } from './acccount';
+import { AccountModule } from './account';
 import { AgentModule } from './agent';
 import { TaskModule } from './task';
 
