@@ -9,17 +9,13 @@ import { Task, TaskBase } from './task.type';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { UnauthorizedException } from '@nestjs/common';
 import { TaskBaseModel, TaskModel } from 'shared/model';
-import { AppLoggerService } from 'src/core/logger';
 
 export const DELETED_TASK_MESSAGE = 'Task successsfully deleted';
 export const UNAUTHORIZED_TASK_MESSAGE = 'AccountId must be informed';
 
 @Resolver()
 export class TaskResolver {
-  constructor(
-    private readonly taskService: TaskService,
-    private readonly logger: AppLoggerService,
-  ) {}
+  constructor(private readonly taskService: TaskService) {}
 
   @Query(() => [Task])
   async listTasks(
@@ -61,7 +57,6 @@ export class TaskResolver {
     @Context('accountid') accountId: string,
     @Args('data') input: UpdateTaskInput,
   ): Promise<TaskBaseModel> {
-    this.logger.log(`AQUIIII ${accountId}`);
     if (!Number(accountId)) {
       throw new UnauthorizedException(UNAUTHORIZED_TASK_MESSAGE);
     }

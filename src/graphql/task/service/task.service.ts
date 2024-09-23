@@ -53,7 +53,8 @@ export class TaskService {
       throw new UnauthorizedException(ACCOUNT_UNAUTHORIZED_MESSAGE);
     }
 
-    return this.taskDatasource.update(id, dataToUpdate);
+    const updatedTask = await this.taskDatasource.update(id, dataToUpdate);
+    return updatedTask;
   }
 
   async delete(id: string, accountId: number): Promise<void> {

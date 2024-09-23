@@ -19,11 +19,13 @@ export class TaskDatasourceService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findById(id: string): Promise<TaskBaseModel> {
+    let task: TaskBaseModel;
     try {
-      return this.prisma.task.findFirstOrThrow({ where: { id } });
+      task = await this.prisma.task.findFirstOrThrow({ where: { id } });
     } catch {
       throw new NotFoundException(TASK_NOT_FOUND_MESSAGE);
     }
+    return task;
   }
 
   async findAllTasksByAccountId(id: number): Promise<TaskBaseModel[]> {
