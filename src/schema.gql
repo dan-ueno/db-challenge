@@ -13,6 +13,14 @@ type Account {
   name: String!
 }
 
+type AccountBase {
+  """Account email"""
+  email: String!
+
+  """Account name"""
+  name: String!
+}
+
 input AccountByEmailInput {
   """Account email"""
   email: String!
@@ -50,18 +58,101 @@ input CreateAgentInput {
   name: String!
 }
 
+input CreateTaskInput {
+  """duration of the task, in days"""
+  duration: Float!
+
+  """Schedule id which originated task"""
+  scheduleId: String!
+
+  """Start of Task"""
+  startTime: DateTime!
+
+  """task of type work or break"""
+  type: TaskType!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DeleteTaskInput {
+  """Task id"""
+  id: String!
+}
+
+input FindSchedulesTaskInput {
+  """Schedule id which originated task"""
+  scheduleId: String!
+}
+
 type Mutation {
   createAccount(data: CreateAccountInput!): Account!
   createAgent(data: CreateAgentInput!): Agent!
+  createTask(data: CreateTaskInput!): TaskBase!
   deleteAccount: String!
   deleteAgent: String!
+  deleteTask(data: DeleteTaskInput!): String!
   updateAccount(data: UpdateAccountInput!): Account!
   updateAgent(data: UpdateAgentInput!): Agent!
+  updateTask(data: UpdateTaskInput!): TaskBase!
 }
 
 type Query {
   getAccount(data: AccountByEmailInput!): Account!
   getAgent(data: AgentByEmailInput!): Agent!
+  listTasks: [Task!]!
+  listTasksFromSchedule(data: FindSchedulesTaskInput!): [Task!]!
+}
+
+type Task {
+  """Account associated with the schedule"""
+  account: AccountBase!
+
+  """Account id"""
+  accountId: Float!
+
+  """duration of the task, in days"""
+  duration: Float!
+
+  """Task id"""
+  id: String!
+
+  """Schedule id which originated task"""
+  scheduleId: String!
+
+  """Date of start"""
+  startTime: DateTime!
+
+  """task of type work or break"""
+  type: TaskType!
+}
+
+type TaskBase {
+  """Account id"""
+  accountId: Float!
+
+  """duration of the task, in days"""
+  duration: Float!
+
+  """Task id"""
+  id: String!
+
+  """Schedule id which originated task"""
+  scheduleId: String!
+
+  """Date of start"""
+  startTime: DateTime!
+
+  """task of type work or break"""
+  type: TaskType!
+}
+
+"""define task as work or break"""
+enum TaskType {
+  break
+  work
 }
 
 input UpdateAccountInput {
@@ -72,4 +163,18 @@ input UpdateAccountInput {
 input UpdateAgentInput {
   """Agent name"""
   name: String!
+}
+
+input UpdateTaskInput {
+  """duration of the task, in days"""
+  duration: Float
+
+  """id"""
+  id: String!
+
+  """Date of start"""
+  startTime: DateTime
+
+  """task of type work or break"""
+  type: TaskType
 }

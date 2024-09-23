@@ -17,6 +17,7 @@ const config: Config = {
   testTimeout: 30000,
   verbose: true,
   maxConcurrency: 1,
+  maxWorkers: 1,
 };
 
 export default config;

@@ -2,35 +2,73 @@ import { PrismaService } from '@core/database';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ScheduleBaseModel, ScheduleModel } from 'shared/model';
 import { Prisma } from '@prisma/client';
+import { endOfDay, startOfDay } from 'date-fns';
 
-type CreateScheduleInputData = Omit<
+export type CreateScheduleInputData = Omit<
   Prisma.ScheduleUncheckedCreateInput,
   'id' | 'tasks'
 >;
 
-interface UpdateScheduleInputData {
+export interface UpdateScheduleInputData {
   agentId?: number;
   startTime?: Date | string;
   endTime?: Date | string;
 }
+
+const SCHEDULE_NOT_FOUND_MESSAGE = 'Schedule not found';
 
 @Injectable()
 export class ScheduleDatasourceService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findById(id: string): Promise<ScheduleBaseModel> {
+    let schedule: ScheduleBaseModel;
     try {
-      return this.prisma.schedule.findFirstOrThrow({ where: { id } });
+      schedule = await this.prisma.schedule.findFirstOrThrow({
+        where: { id },
+      });
     } catch {
-      throw new NotFoundException('Schedule not found');
+      throw new NotFoundException(SCHEDULE_NOT_FOUND_MESSAGE);
     }
+    return schedule;
   }
 
-  async getById(id: string): Promise<ScheduleModel> {
-    return this.prisma.schedule.findFirstOrThrow({
-      where: { id },
-      include: { tasks: true },
+  async findAvailableByAccountId(id: number): Promise<ScheduleModel[]> {
+    const todayStart = startOfDay(new Date());
+    const todayEnd = endOfDay(new Date());
+
+    const schedules: ScheduleModel[] = await this.prisma.schedule.findMany({
+      where: {
+        accountId: id,
+        startTime: { lte: todayEnd },
+        endTime: { gte: todayStart },
+      },
+      include: {
+        account: true,
+        agent: true,
+        tasks: { include: { account: true } },
+      },
     });
+    return schedules ?? [];
+  }
+
+  async findAvailableByAgentId(id: number): Promise<ScheduleModel[]> {
+    const todayStart = startOfDay(new Date());
+    const todayEnd = endOfDay(new Date());
+
+    const schedules: ScheduleModel[] = await this.prisma.schedule.findMany({
+      where: {
+        agentId: id,
+        startTime: { lte: todayEnd },
+        endTime: { gte: todayStart },
+      },
+      include: {
+        account: true,
+        agent: true,
+        tasks: { include: { account: true } },
+      },
+    });
+    return schedules ?? [];
   }
 
   async create(data: CreateScheduleInputData): Promise<ScheduleBaseModel> {
