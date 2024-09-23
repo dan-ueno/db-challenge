@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { AgentBaseModel, AgentDatasourceService, AgentModel } from 'shared';
+import { AgentModel, AgentDatasourceService } from 'shared';
 
 @Injectable()
 export class AgentService {
   constructor(private readonly agentDatasource: AgentDatasourceService) {}
 
-  async findById(id: number): Promise<AgentBaseModel> {
+  async findById(id: number): Promise<AgentModel> {
     return this.agentDatasource.findById(id);
   }
 
-  async findByEmail(email: string): Promise<AgentBaseModel> {
+  async findByEmail(email: string): Promise<AgentModel> {
     return this.agentDatasource.findByEmail(email);
   }
 
-  async create(name: string, email: string): Promise<AgentBaseModel> {
+  async create(name: string, email: string): Promise<AgentModel> {
     return this.agentDatasource.create(name, email);
   }
 
-  async update(id: number, name: string): Promise<AgentBaseModel> {
+  async update(id: number, name: string): Promise<AgentModel> {
     await this.agentDatasource.findById(id);
 
     return this.agentDatasource.update(id, name);

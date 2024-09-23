@@ -18,7 +18,7 @@ input AccountByEmailInput {
   email: String!
 }
 
-type AgentBase {
+type Agent {
   """Agent email"""
   email: String!
 
@@ -52,16 +52,16 @@ input CreateAgentInput {
 
 type Mutation {
   createAccount(data: CreateAccountInput!): Account!
-  createAgent(data: CreateAgentInput!): AgentBase!
+  createAgent(data: CreateAgentInput!): Agent!
   deleteAccount: String!
   deleteAgent: String!
   updateAccount(data: UpdateAccountInput!): Account!
-  updateAgent(data: UpdateAgentInput!): AgentBase!
+  updateAgent(data: UpdateAgentInput!): Agent!
 }
 
 type Query {
   getAccount(data: AccountByEmailInput!): Account!
-  getAgent(data: AgentByEmailInput!): AgentBase!
+  getAgent(data: AgentByEmailInput!): Agent!
 }
 
 input UpdateAccountInput {
