@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AgentBaseModel, AgentModel } from 'shared/model';
+import { AgentModel } from 'shared/model';
 
 export const NOT_FOUND_AGENT_MESSAGE = 'Agent not found';
 export const CONFLICT_AGENT_MESSAGE = 'Email already registered';
@@ -13,8 +13,8 @@ export const CONFLICT_AGENT_MESSAGE = 'Email already registered';
 export class AgentDatasourceService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findById(id: number): Promise<AgentBaseModel> {
-    let agent: AgentBaseModel;
+  async findById(id: number): Promise<AgentModel> {
+    let agent: AgentModel;
     try {
       agent = await this.prisma.agent.findFirstOrThrow({ where: { id } });
     } catch {
@@ -23,8 +23,8 @@ export class AgentDatasourceService {
     return agent;
   }
 
-  async findByEmail(email: string): Promise<AgentBaseModel> {
-    let agent: AgentBaseModel;
+  async findByEmail(email: string): Promise<AgentModel> {
+    let agent: AgentModel;
     try {
       agent = await this.prisma.agent.findFirstOrThrow({ where: { email } });
     } catch {
@@ -33,8 +33,8 @@ export class AgentDatasourceService {
     return agent;
   }
 
-  async create(name: string, email: string): Promise<AgentBaseModel> {
-    let agent: AgentBaseModel;
+  async create(name: string, email: string): Promise<AgentModel> {
+    let agent: AgentModel;
     try {
       agent = await this.prisma.agent.create({
         data: {
@@ -48,7 +48,7 @@ export class AgentDatasourceService {
     return agent;
   }
 
-  async update(id: number, name: string): Promise<AgentBaseModel> {
+  async update(id: number, name: string): Promise<AgentModel> {
     return this.prisma.agent.update({ where: { id }, data: { name } });
   }
 

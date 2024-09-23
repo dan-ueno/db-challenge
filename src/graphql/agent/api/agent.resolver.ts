@@ -4,10 +4,10 @@ import {
   CreateAgentInput,
 } from './agent.input';
 import { AgentService } from '../service/agent.service';
-import { AgentBase } from './agent.type';
+import { Agent } from './agent.type';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { UnauthorizedException } from '@nestjs/common';
-import { AgentBaseModel } from 'shared/model';
+import { AgentModel } from 'shared/model';
 
 export const DELETED_AGENT_MESSAGE = 'Agent successsfully deleted';
 export const UNAUTHORIZED_AGENT_MESSAGE = 'AgentId must be informed';
@@ -16,25 +16,23 @@ export const UNAUTHORIZED_AGENT_MESSAGE = 'AgentId must be informed';
 export class AgentResolver {
   constructor(private readonly agentService: AgentService) {}
 
-  @Query(() => AgentBase)
-  async getAgent(
-    @Args('data') input: AgentByEmailInput,
-  ): Promise<AgentBaseModel> {
+  @Query(() => Agent)
+  async getAgent(@Args('data') input: AgentByEmailInput): Promise<AgentModel> {
     return this.agentService.findByEmail(input.email);
   }
 
-  @Mutation(() => AgentBase)
+  @Mutation(() => Agent)
   async createAgent(
     @Args('data') input: CreateAgentInput,
-  ): Promise<AgentBaseModel> {
+  ): Promise<AgentModel> {
     return this.agentService.create(input.name, input.email);
   }
 
-  @Mutation(() => AgentBase)
+  @Mutation(() => Agent)
   async updateAgent(
     @Context('agentid') agentId: string,
     @Args('data') input: UpdateAgentInput,
-  ): Promise<AgentBaseModel> {
+  ): Promise<AgentModel> {
     if (!Number(agentId)) {
       throw new UnauthorizedException(UNAUTHORIZED_AGENT_MESSAGE);
     }

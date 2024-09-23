@@ -4,10 +4,10 @@ import {
   CreateAccountInput,
 } from './account.input';
 import { AccountService } from '../service/account.service';
-import { AccountBase } from './account.type';
+import { Account } from './account.type';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { UnauthorizedException } from '@nestjs/common';
-import { AccountBaseModel } from 'shared/model';
+import { AccountModel } from 'shared/model';
 
 export const DELETED_ACCOUNT_MESSAGE = 'Account successsfully deleted';
 export const UNAUTHORIZED_ACCOUNT_MESSAGE = 'accountId must be informed';
@@ -16,25 +16,25 @@ export const UNAUTHORIZED_ACCOUNT_MESSAGE = 'accountId must be informed';
 export class AccountResolver {
   constructor(private readonly accountService: AccountService) {}
 
-  @Query(() => AccountBase)
+  @Query(() => Account)
   async getAccount(
     @Args('data') input: AccountByEmailInput,
-  ): Promise<AccountBaseModel> {
+  ): Promise<AccountModel> {
     return this.accountService.findByEmail(input.email);
   }
 
-  @Mutation(() => AccountBase)
+  @Mutation(() => Account)
   async createAccount(
     @Args('data') input: CreateAccountInput,
-  ): Promise<AccountBaseModel> {
+  ): Promise<AccountModel> {
     return this.accountService.create(input.name, input.email);
   }
 
-  @Mutation(() => AccountBase)
+  @Mutation(() => Account)
   async updateAccount(
     @Context('accountid') accountId: string,
     @Args('data') input: UpdateAccountInput,
-  ): Promise<AccountBaseModel> {
+  ): Promise<AccountModel> {
     if (!Number(accountId)) {
       throw new UnauthorizedException(UNAUTHORIZED_ACCOUNT_MESSAGE);
     }

@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type AccountBase {
+type Account {
   """Account email"""
   email: String!
 
@@ -13,17 +13,33 @@ type AccountBase {
   name: String!
 }
 
+type AccountBase {
+  """Account email"""
+  email: String!
+
+  """Account name"""
+  name: String!
+}
+
 input AccountByEmailInput {
   """Account email"""
   email: String!
 }
 
-type AgentBase {
+type Agent {
   """Agent email"""
   email: String!
 
   """Agent id"""
   id: Float!
+
+  """Agent name"""
+  name: String!
+}
+
+type AgentBase {
+  """Agent email"""
+  email: String!
 
   """Agent name"""
   name: String!
@@ -50,18 +66,165 @@ input CreateAgentInput {
   name: String!
 }
 
+input CreateScheduleInput {
+  """Agent id"""
+  agentId: Float!
+
+  """End of schedule"""
+  endTime: DateTime!
+
+  """Start of Schedule"""
+  startTime: DateTime!
+}
+
+input CreateTaskInput {
+  """duration of the task, in days"""
+  duration: Float!
+
+  """Schedule id which originated task"""
+  scheduleId: String!
+
+  """Start of Task"""
+  startTime: DateTime!
+
+  """task of type work or break"""
+  type: TaskType!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DeleteScheduleInput {
+  """Schedule id"""
+  id: String!
+}
+
+input DeleteTaskInput {
+  """Task id"""
+  id: String!
+}
+
+input FindSchedulesTaskInput {
+  """Schedule id which originated task"""
+  scheduleId: String!
+}
+
 type Mutation {
-  createAccount(data: CreateAccountInput!): AccountBase!
-  createAgent(data: CreateAgentInput!): AgentBase!
+  createAccount(data: CreateAccountInput!): Account!
+  createAgent(data: CreateAgentInput!): Agent!
+  createSchedule(data: CreateScheduleInput!): ScheduleBase!
+  createTask(data: CreateTaskInput!): TaskBase!
   deleteAccount: String!
   deleteAgent: String!
-  updateAccount(data: UpdateAccountInput!): AccountBase!
-  updateAgent(data: UpdateAgentInput!): AgentBase!
+  deleteSchedule(data: DeleteScheduleInput!): String!
+  deleteTask(data: DeleteTaskInput!): String!
+  updateAccount(data: UpdateAccountInput!): Account!
+  updateAgent(data: UpdateAgentInput!): Agent!
+  updateSchedule(data: UpdateScheduleInput!): ScheduleBase!
+  updateTask(data: UpdateTaskInput!): TaskBase!
 }
 
 type Query {
-  getAccount(data: AccountByEmailInput!): AccountBase!
-  getAgent(data: AgentByEmailInput!): AgentBase!
+  getAccount(data: AccountByEmailInput!): Account!
+  getAgent(data: AgentByEmailInput!): Agent!
+  listSchedulesforAccount: [Schedule!]!
+  listSchedulesforAgent: [Schedule!]!
+  listTasks: [Task!]!
+  listTasksFromSchedule(data: FindSchedulesTaskInput!): [Task!]!
+}
+
+type Schedule {
+  """Account associated with the schedule"""
+  account: AccountBase!
+
+  """Account id"""
+  accountId: Float!
+
+  """Agent assigned to the schedule"""
+  agent: AgentBase!
+
+  """Agent id"""
+  agentId: Float!
+
+  """Date to end"""
+  endTime: DateTime!
+
+  """Schedule id"""
+  id: String!
+
+  """Date of start"""
+  startTime: DateTime!
+
+  """schedules tasks"""
+  tasks: [Task!]!
+}
+
+type ScheduleBase {
+  """Account id"""
+  accountId: Float!
+
+  """Agent id"""
+  agentId: Float!
+
+  """Date to end"""
+  endTime: DateTime!
+
+  """Schedule id"""
+  id: String!
+
+  """Date of start"""
+  startTime: DateTime!
+}
+
+type Task {
+  """Account associated with the schedule"""
+  account: AccountBase!
+
+  """Account id"""
+  accountId: Float!
+
+  """duration of the task, in days"""
+  duration: Float!
+
+  """Task id"""
+  id: String!
+
+  """Schedule id which originated task"""
+  scheduleId: String!
+
+  """Date of start"""
+  startTime: DateTime!
+
+  """task of type work or break"""
+  type: TaskType!
+}
+
+type TaskBase {
+  """Account id"""
+  accountId: Float!
+
+  """duration of the task, in days"""
+  duration: Float!
+
+  """Task id"""
+  id: String!
+
+  """Schedule id which originated task"""
+  scheduleId: String!
+
+  """Date of start"""
+  startTime: DateTime!
+
+  """task of type work or break"""
+  type: TaskType!
+}
+
+"""define task as work or break"""
+enum TaskType {
+  break
+  work
 }
 
 input UpdateAccountInput {
@@ -72,4 +235,32 @@ input UpdateAccountInput {
 input UpdateAgentInput {
   """Agent name"""
   name: String!
+}
+
+input UpdateScheduleInput {
+  """AgentId"""
+  agentId: Float
+
+  """Date to end"""
+  endTime: DateTime
+
+  """id"""
+  id: String!
+
+  """Date of start"""
+  startTime: DateTime
+}
+
+input UpdateTaskInput {
+  """duration of the task, in days"""
+  duration: Float
+
+  """id"""
+  id: String!
+
+  """Date of start"""
+  startTime: DateTime
+
+  """task of type work or break"""
+  type: TaskType
 }

@@ -78,6 +78,6 @@ describe('Account Resolver - createAccount mutation', () => {
     );
 
     expect(response.data).toBeNull();
-    expect(response.errors[0].message).toBe(CONFLICT_ACCOUNT_MESSAGE);
+    expect(response.errors?.[0].message).toBe(CONFLICT_ACCOUNT_MESSAGE);
   });
 });

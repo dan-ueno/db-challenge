@@ -17,8 +17,8 @@ model Schedule {
     endTime   DateTime @map("end_time")
 
     tasks   Task[]  @relation("schedule_tasks")
-    account Account @relation(name: "account_schedules", fields: [accountId], references: [id])
-    agent   Agent   @relation(name: "agent_schedules", fields: [agentId], references: [id])
+    account Account @relation(name: "account_schedules", fields: [accountId], references: [id],  onDelete: Cascade)
+    agent   Agent   @relation(name: "agent_schedules", fields: [agentId], references: [id],  onDelete: Cascade)
 
     @@map("schedule")
 }
@@ -31,7 +31,7 @@ model Task {
     duration   Int
     type       TaskEnum
 
-    schedule Schedule @relation(name: "schedule_tasks", fields: [scheduleId], references: [id])
+    schedule Schedule @relation(name: "schedule_tasks", fields: [scheduleId], references: [id],  onDelete: Cascade)
     account  Account  @relation(name: "account_tasks", fields: [accountId], references: [id])
 
     @@map("task")

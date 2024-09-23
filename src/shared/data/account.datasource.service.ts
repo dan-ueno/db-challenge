@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AccountBaseModel, AccountModel } from 'shared/model';
+import { AccountModel } from 'shared/model';
 
 export const NOT_FOUND_ACCOUNT_MESSAGE = 'Account not found';
 export const CONFLICT_ACCOUNT_MESSAGE = 'Email already registered';
@@ -13,8 +13,8 @@ export const CONFLICT_ACCOUNT_MESSAGE = 'Email already registered';
 export class AccountDatasourceService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findById(id: number): Promise<AccountBaseModel> {
-    let account: AccountBaseModel;
+  async findById(id: number): Promise<AccountModel> {
+    let account: AccountModel;
     try {
       account = await this.prisma.account.findFirstOrThrow({ where: { id } });
     } catch {
@@ -23,8 +23,8 @@ export class AccountDatasourceService {
     return account;
   }
 
-  async findByEmail(email: string): Promise<AccountBaseModel> {
-    let account: AccountBaseModel;
+  async findByEmail(email: string): Promise<AccountModel> {
+    let account: AccountModel;
     try {
       account = await this.prisma.account.findFirstOrThrow({
         where: { email },
@@ -35,8 +35,8 @@ export class AccountDatasourceService {
     return account;
   }
 
-  async create(name: string, email: string): Promise<AccountBaseModel> {
-    let account: AccountBaseModel;
+  async create(name: string, email: string): Promise<AccountModel> {
+    let account: AccountModel;
     try {
       account = await this.prisma.account.create({
         data: {
@@ -50,7 +50,7 @@ export class AccountDatasourceService {
     return account;
   }
 
-  async update(id: number, name: string): Promise<AccountBaseModel> {
+  async update(id: number, name: string): Promise<AccountModel> {
     return this.prisma.account.update({ where: { id }, data: { name } });
   }
 
