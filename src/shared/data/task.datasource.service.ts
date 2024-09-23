@@ -73,7 +73,7 @@ export class TaskDatasourceService {
   }
 
   async delete(id: string): Promise<void> {
-    await this.prisma.schedule.delete({ where: { id } });
+    await this.prisma.task.delete({ where: { id } });
     return;
   }
 }
