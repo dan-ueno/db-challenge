@@ -37,6 +37,14 @@ type Agent {
   name: String!
 }
 
+type AgentBase {
+  """Agent email"""
+  email: String!
+
+  """Agent name"""
+  name: String!
+}
+
 input AgentByEmailInput {
   """Agent email"""
   email: String!
@@ -58,6 +66,17 @@ input CreateAgentInput {
   name: String!
 }
 
+input CreateScheduleInput {
+  """Agent id"""
+  agentId: Float!
+
+  """End of schedule"""
+  endTime: DateTime!
+
+  """Start of Schedule"""
+  startTime: DateTime!
+}
+
 input CreateTaskInput {
   """duration of the task, in days"""
   duration: Float!
@@ -77,6 +96,11 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input DeleteScheduleInput {
+  """Schedule id"""
+  id: String!
+}
+
 input DeleteTaskInput {
   """Task id"""
   id: String!
@@ -90,20 +114,68 @@ input FindSchedulesTaskInput {
 type Mutation {
   createAccount(data: CreateAccountInput!): Account!
   createAgent(data: CreateAgentInput!): Agent!
+  createSchedule(data: CreateScheduleInput!): ScheduleBase!
   createTask(data: CreateTaskInput!): TaskBase!
   deleteAccount: String!
   deleteAgent: String!
+  deleteSchedule(data: DeleteScheduleInput!): String!
   deleteTask(data: DeleteTaskInput!): String!
   updateAccount(data: UpdateAccountInput!): Account!
   updateAgent(data: UpdateAgentInput!): Agent!
+  updateSchedule(data: UpdateScheduleInput!): ScheduleBase!
   updateTask(data: UpdateTaskInput!): TaskBase!
 }
 
 type Query {
   getAccount(data: AccountByEmailInput!): Account!
   getAgent(data: AgentByEmailInput!): Agent!
+  listSchedulesforAccount: [Schedule!]!
+  listSchedulesforAgent: [Schedule!]!
   listTasks: [Task!]!
   listTasksFromSchedule(data: FindSchedulesTaskInput!): [Task!]!
+}
+
+type Schedule {
+  """Account associated with the schedule"""
+  account: AccountBase!
+
+  """Account id"""
+  accountId: Float!
+
+  """Agent assigned to the schedule"""
+  agent: AgentBase!
+
+  """Agent id"""
+  agentId: Float!
+
+  """Date to end"""
+  endTime: DateTime!
+
+  """Schedule id"""
+  id: String!
+
+  """Date of start"""
+  startTime: DateTime!
+
+  """schedules tasks"""
+  tasks: [Task!]!
+}
+
+type ScheduleBase {
+  """Account id"""
+  accountId: Float!
+
+  """Agent id"""
+  agentId: Float!
+
+  """Date to end"""
+  endTime: DateTime!
+
+  """Schedule id"""
+  id: String!
+
+  """Date of start"""
+  startTime: DateTime!
 }
 
 type Task {
@@ -163,6 +235,20 @@ input UpdateAccountInput {
 input UpdateAgentInput {
   """Agent name"""
   name: String!
+}
+
+input UpdateScheduleInput {
+  """AgentId"""
+  agentId: Float
+
+  """Date to end"""
+  endTime: DateTime
+
+  """id"""
+  id: String!
+
+  """Date of start"""
+  startTime: DateTime
 }
 
 input UpdateTaskInput {
