@@ -35,13 +35,24 @@ export class TaskDatasourceService {
     const todayEnd = endOfDay(new Date());
 
     const tasks: TaskModel[] = await this.prisma.$queryRaw`
-    SELECT t.*, a.*
+    SELECT 
+      t.id,
+      t.schedule_id AS "scheduleId",
+      t.account_id AS "accountId",
+      t.duration,
+      t.start_time AS "startTime",
+      t.type,
+      json_build_object(
+        'name', a.name,
+        'email', a.email
+      ) AS account
     FROM task t
     JOIN account a ON t.account_id = a.id
     WHERE t.account_id = ${id}
       AND t.start_time <= ${todayEnd}
       AND t.start_time + INTERVAL '1 day' * t.duration >= ${todayStart}
   `;
+
     return tasks ?? [];
   }
 
@@ -53,7 +64,17 @@ export class TaskDatasourceService {
     const todayEnd = endOfDay(new Date());
 
     const tasks: TaskModel[] = await this.prisma.$queryRaw`
-    SELECT t.*, a.*
+    SELECT 
+      t.id,
+      t.schedule_id AS "scheduleId",
+      t.account_id AS "accountId",
+      t.duration,
+      t.start_time AS "startTime",
+      t.type,
+      json_build_object(
+        'name', a.name,
+        'email', a.email
+      ) AS account
     FROM task t
     JOIN account a ON t.account_id = a.id
     WHERE t.account_id = ${accountId}
